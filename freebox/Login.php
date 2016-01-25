@@ -38,7 +38,7 @@ class Login {
 
         $response = $rest->getCurlResponse();
         if( ! $response->success){
-            throw new Exception( __FUNCTION__ . ' Fail');
+            throw new \Exception( __FUNCTION__ . ' Fail');
         }
 
 
@@ -68,7 +68,7 @@ class Login {
         if( ! $response->success){
             echo "ERROR CODE : ". $response->error_code;
             echo "MESSAGE : ". $response->msg;
-            throw new Exception( __FUNCTION__ . ' Fail');
+            throw new \Exception( __FUNCTION__ . ' Fail');
         }
 
         $this->session_token = $response->result->session_token;
