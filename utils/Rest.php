@@ -8,9 +8,10 @@ namespace alphayax\utils;
 class Rest {
 
     /** @var resource */
-    private $_curl_handler;
+    protected $_curl_handler;
 
-    private $_curl_response;
+    /** @var array */
+    protected $_curl_response;
 
     /**
      * Rest constructor.
@@ -38,6 +39,18 @@ class Rest {
         curl_setopt( $this->_curl_handler, CURLOPT_POSTFIELDS, json_encode( $curl_post_data));
         $this->exec( $isJson);
     }
+
+    /**
+     * @param $curl_post_data
+     * @param bool|true $isJson
+     */
+    public function PUT( $curl_post_data, $isJson = true){
+        curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt( $this->_curl_handler, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt( $this->_curl_handler, CURLOPT_POSTFIELDS, json_encode( $curl_post_data));
+        $this->exec( $isJson);
+    }
+
 
     /**
      * @param $isJson

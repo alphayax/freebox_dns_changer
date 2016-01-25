@@ -1,5 +1,5 @@
 <?php
-namespace alphayax\freebox;
+namespace alphayax\freebox\api\v3;
 
 
 

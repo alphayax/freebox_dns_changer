@@ -1,20 +1,18 @@
 <?php
 namespace alphayax;
+use alphayax\freebox\api\v3\DHCP;
 
 require_once 'autoload.php';
 AYX_Autoloader::Register();
 
 
-/*
-require_once 'rest.php';
-require_once 'Authorize.php';
-require_once 'Login.php';
-*/
-
-$Auth  = new freebox\Authorize();
-$Login = new freebox\Login( $Auth->getAppToken());
+$Auth  = new freebox\api\v3\Authorize();
+$Login = new freebox\api\v3\Login( $Auth->getAppToken());
 
 $Login->ask_login_status();
 $Login->create_session();
 
-
+$Config = new DHCP( $Login->getSessionToken());
+$Config->get_current_configuration();
+$Config->set_attribute_configuration('ip_range_end','192.168.0.51');
+$Config->get_current_configuration();
