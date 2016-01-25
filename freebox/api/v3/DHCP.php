@@ -32,18 +32,16 @@ class DHCP {
     }
 
     /**
-     *
+     * @param array $new_config_x
      */
-    public function set_attribute_configuration( $configName, $configValue){
+    public function set_attribute_configuration( $new_config_x = []){
 
         $service = '/api/v3/dhcp/config/';
         $host = 'mafreebox.freebox.fr';
 
         $rest = new \alphayax\freebox\utils\RestAuth( 'http://' . $host . $service);
         $rest->setSessionToken( $this->session_token);
-        $rest->PUT( [
-            $configName => $configValue
-        ]);
+        $rest->PUT( $new_config_x);
 
         $response = $rest->getCurlResponse();
         var_dump( $response);
