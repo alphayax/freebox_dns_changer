@@ -4,6 +4,7 @@ namespace alphayax\freebox\api\v3;
 /**
  * Class Authorize
  * @package alphayax\freebox\api\v3
+ * @author <alphayax@gmail.com>
  */
 class Authorize {
 

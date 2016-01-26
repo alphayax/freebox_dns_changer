@@ -5,6 +5,7 @@ namespace alphayax\freebox\api\v3;
 /**
  * Class DHCP
  * @package alphayax\freebox\api\v3
+ * @author <alphayax@gmail.com>
  */
 class DHCP {
 

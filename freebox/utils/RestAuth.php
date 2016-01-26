@@ -5,6 +5,7 @@ namespace alphayax\freebox\utils;
 /**
  * Class Rest
  * @package alphayax\utils
+ * @author <alphayax@gmail.com>
  */
 class RestAuth extends \alphayax\utils\Rest {
 

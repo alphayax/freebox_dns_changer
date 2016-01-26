@@ -2,7 +2,11 @@
 namespace alphayax\freebox\api\v3;
 
 
-
+/**
+ * Class Login
+ * @package alphayax\freebox\api\v3
+ * @author <alphayax@gmail.com>
+ */
 class Login {
 
     const APP_ID        = 'com.alphayax.freebox.dns_changer';

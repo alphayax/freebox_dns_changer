@@ -4,6 +4,7 @@ namespace alphayax\utils;
 /**
  * Class Rest
  * @package alphayax\utils
+ * @author <alphayax@gmail.com>
  */
 class Rest {
 

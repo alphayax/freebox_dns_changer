@@ -1,7 +1,6 @@
 <?php
 namespace alphayax;
 
-
 /**
  * Class AYX_Autoloader
  * @author Yann Ponzoni <alphayax@gmail.com>
@@ -10,7 +9,7 @@ final class AYX_Autoloader {
 
 	const SOURCE_ADI        = __DIR__;          // Directory where the sources are
 	const ROOT_NAMESPACE    = __NAMESPACE__;    // Name of the root namespace
-	const DEBUG_AUTOLOAD    = true;            // Enable or disable advanced logging when autoload fail
+	const DEBUG_AUTOLOAD    = false;            // Enable or disable advanced logging when autoload fail
 
 	/**
 	* Add the PublishingLib autoloader in the autoloaders stack
@@ -42,7 +41,7 @@ final class AYX_Autoloader {
 	* @return bool
 	*/
 	final private static function Autoload_from_namespace( $_namespaces, $_class){
-		array_shift( $_namespaces);                                 // Removing the root namespace (Publishing)
+		array_shift( $_namespaces);                                 // Removing the root namespace (alphayax)
 		$class_rdi = implode( DIRECTORY_SEPARATOR, $_namespaces);   // Concat all NS with a /
 		$class_rdi = $class_rdi ? "$class_rdi/" : '';               // Adding the / between NS and class name
 
