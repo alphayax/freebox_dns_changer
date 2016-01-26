@@ -1,7 +1,11 @@
 <?php
-namespace alphayax\freebox;
-// TODO : Passer par un namespace plus complet (alphayax/freebox/api/v3/ )
+namespace alphayax\freebox\api\v3;
 
+/**
+ * Class Authorize
+ * @package alphayax\freebox\api\v3
+ * @author <alphayax@gmail.com>
+ */
 class Authorize {
 
     const APP_ID = 'com.alphayax.freebox.dns_changer';

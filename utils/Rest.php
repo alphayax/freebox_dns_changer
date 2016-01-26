@@ -1,29 +1,39 @@
 <?php
 namespace alphayax\utils;
 
-
-//$token = 'LttDmpvaWba2lYf9/xuF1YuwiU4aQplagl66odYcArt5mHpG6S/idiGcZo/EiPKE'
-//$track_id = 0;
-
-
-
+/**
+ * Class Rest
+ * @package alphayax\utils
+ * @author <alphayax@gmail.com>
+ */
 class Rest {
 
     /** @var resource */
-    private $_curl_handler;
+    protected $_curl_handler;
 
-    private $_curl_response;
+    /** @var array */
+    protected $_curl_response;
 
-
+    /**
+     * Rest constructor.
+     * @param $_url
+     */
     public function __construct( $_url){
         $this->_curl_handler = curl_init( $_url);
     }
 
+    /**
+     * @param bool $isJson
+     */
     public function GET( $isJson = true){
         curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
         $this->exec( $isJson);
     }
 
+    /**
+     * @param      $curl_post_data
+     * @param bool $isJson
+     */
     public function POST( $curl_post_data, $isJson = true){
         curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt( $this->_curl_handler, CURLOPT_POST, true);
@@ -31,6 +41,21 @@ class Rest {
         $this->exec( $isJson);
     }
 
+    /**
+     * @param $curl_post_data
+     * @param bool|true $isJson
+     */
+    public function PUT( $curl_post_data, $isJson = true){
+        curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt( $this->_curl_handler, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt( $this->_curl_handler, CURLOPT_POSTFIELDS, json_encode( $curl_post_data));
+        $this->exec( $isJson);
+    }
+
+
+    /**
+     * @param $isJson
+     */
     private function exec( $isJson){
         $this->_curl_response = curl_exec( $this->_curl_handler);
         if( $this->_curl_response === false) {
@@ -47,6 +72,9 @@ class Rest {
         $this->_curl_response;
     }
 
+    /**
+     * @return mixed
+     */
     public function getCurlResponse(){
         return $this->_curl_response;
     }
