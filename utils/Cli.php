@@ -1,9 +1,9 @@
 <?php
-namespace AquaLib\Utils;
+namespace alphayax\utils;
 
 /**
  * Class Cli
- * @package AquaLib\Utils
+ * @package alphayax\utils
  * @author <alphayax@gmail.com>
  */
 class Cli {
