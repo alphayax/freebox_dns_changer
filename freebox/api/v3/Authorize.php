@@ -1,5 +1,7 @@
 <?php
 namespace alphayax\freebox\api\v3;
+use alphayax\freebox\DNS_changer;
+use alphayax\utils\Cli;
 
 /**
  * Class Authorize
@@ -8,11 +10,15 @@ namespace alphayax\freebox\api\v3;
  */
 class Authorize {
 
-    const APP_ID = 'com.alphayax.freebox.dns_changer';
-    const APP_NAME = 'Freebox DNS changer';
-    const APP_VERSION = '0.0.2';
+    /// APIs services
+    const API_AUTHORIZE     = '/api/v3/login/authorize/';
 
+    /// Authorization status
+    const STATUS_UNKNOWN = 'unknown';
     const STATUS_GRANTED = 'granted';
+    const STATUS_PENDING = 'pending';
+    const STATUS_DENIED  = 'denied';
+    const STATUS_TIMEOUT = 'timeout';
 
     /** @var string */
     private $app_token = '';
@@ -21,33 +27,34 @@ class Authorize {
     private $track_id = 0;
 
     /** @var string */
-    private $status = '';
+    private $status = self::STATUS_UNKNOWN;
 
     /** @var string */
     private $challenge = '';
 
+    /**
+     * Authorize constructor.
+     */
     public function __construct(){
         if( file_exists( 'app_token')){
             $this->app_token = file_get_contents( 'app_token');
         }
         else {
             $this->ask_authorization();
-            $is_authorized = false;
-            for( $i = 0; $i < 4; $i++){
+            while( $this->status == self::STATUS_PENDING){
                 $this->get_authorization_status();
-                if( $this->getStatus() == self::STATUS_GRANTED){
-                    $is_authorized = true;
+                if( $this->status == self::STATUS_GRANTED){
+                    file_put_contents('app_token', $this->app_token); // Save app token
                     break;
                 }
                 sleep( 10);
             }
 
-            if( $is_authorized){
-
-                /// Save app token
-                file_put_contents('app_token', $this->app_token);
-
-                echo "Access granted !\n";
+            /// For verbose
+            switch( $this->status){
+                case self::STATUS_GRANTED : Cli::stdout('Access granted !', 0, true, Cli::COLOR_GREEN); break;
+                case self::STATUS_TIMEOUT : Cli::stdout('Access denied. You take to long to authorize app.', 0, true, Cli::COLOR_RED); break;
+                case self::STATUS_DENIED  : Cli::stdout('Access denied. Freebox denied app connexion', 0, true, Cli::COLOR_RED); break;
             }
         }
     }
@@ -57,51 +64,49 @@ class Authorize {
      * Contact the freebox and ask for App auth
      * @throws \Exception
      */
-    public function ask_authorization()
-    {
+    public function ask_authorization(){
 
-        $service = '/api/v3/login/authorize/';
         $host = 'mafreebox.freebox.fr';
 
-        $rest = new \alphayax\utils\Rest('http://' . $host . $service);
+        $rest = new \alphayax\utils\Rest('http://' . $host . self::API_AUTHORIZE);
         $rest->POST([
-            'app_id' => self::APP_ID,
-            'app_name' => self::APP_NAME,
-            'app_version' => self::APP_VERSION,
-            'device_name' => gethostname(),
+            'app_id'        => DNS_changer::APP_ID,
+            'app_name'      => DNS_changer::APP_NAME,
+            'app_version'   => DNS_changer::APP_VERSION,
+            'device_name'   => gethostname(),
         ]);
 
         $response = $rest->getCurlResponse();
-        if (!$response->success) {
+        if( ! $response->success) {
             throw new \Exception('Authorize fail. Unable to contact the freebox');
         }
 
-        echo "Demande d'autorisation envoyée a la freebox\n";
+        Cli::stdout( 'Authorization send to Freebox. Waiting for response...', 0, true, Cli::COLOR_YELLOW);
 
         $this->app_token = $response->result->app_token;
         $this->track_id  = $response->result->track_id;
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function get_authorization_status(){
 
-    public function get_authorization_status()
-    {
-
-        $service = '/api/v3/login/authorize/' . $this->track_id;
         $host = 'mafreebox.freebox.fr';
 
-        echo "Verification de la demande d'autorisation... ";
-        $rest = new \alphayax\utils\Rest('http://' . $host . $service);
+        Cli::stdout( 'Check authorization status... ', 0, false, Cli::COLOR_YELLOW);
+        $rest = new \alphayax\utils\Rest('http://' . $host . self::API_AUTHORIZE . $this->track_id);
         $rest->GET();
 
         $response = $rest->getCurlResponse();
-        if (!$response->success) {
+        if( ! $response->success) {
             throw new \Exception(__FUNCTION__ . ' Fail');
         }
 
         $this->status = $response->result->status;
         $this->challenge = $response->result->challenge;
 
-        echo $this->status . PHP_EOL;
+        Cli::stdout( $this->status, 0, true, Cli::COLOR_BLUE);
     }
 
     /**

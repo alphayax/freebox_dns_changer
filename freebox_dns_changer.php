@@ -19,8 +19,9 @@ $Login->ask_login_status();
 $Login->create_session();
 
 /// Find new DNS servers
-$new_DNS_servers = opennic\DNS_server::get_nearest_servers();
-$new_DNS_servers = array_merge( $new_DNS_servers, ['8.8.8.8', '192.168.0.254']);
+$opennic_DNS_servers = opennic\DNS_server::get_nearest_servers();
+$google_DNS_servers  = google\DNS_server::get_nearest_servers();
+$new_DNS_servers = array_merge( $opennic_DNS_servers, $google_DNS_servers);
 
 /// Update Configuration
 $Config = new freebox\api\v3\DHCP( $Login->getSessionToken());

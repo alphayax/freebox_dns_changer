@@ -14,6 +14,10 @@ class Cli {
 
 	/// Default Colors
 	const COLOR_REGULAR = "%s";
+	const COLOR_CYAN    = "\033[01;36m%s\033[00m";
+	const COLOR_MAGENTA = "\033[01;35m%s\033[00m";
+	const COLOR_BLUE    = "\033[01;34m%s\033[00m";
+	const COLOR_YELLOW  = "\033[01;33m%s\033[00m";
 	const COLOR_GREEN   = "\033[01;32m%s\033[00m";
 	const COLOR_RED     = "\033[01;31m%s\033[00m";
 
