@@ -1,5 +1,7 @@
 <?php
-namespace alphayax\freebox\api\v3;
+namespace alphayax\freebox\api\v3\login;
+use alphayax\freebox\api\v3\freebox_service;
+use alphayax\freebox\DNS_changer;
 
 
 /**
@@ -7,15 +9,14 @@ namespace alphayax\freebox\api\v3;
  * @package alphayax\freebox\api\v3
  * @author <alphayax@gmail.com>
  */
-class Login {
+class Login extends freebox_service {
 
-    const APP_ID        = 'com.alphayax.freebox.dns_changer';
-    const APP_NAME      = 'Freebox DNS changer';
-    const APP_VERSION   = '0.0.2';
+    /// APIs services
+    const API_LOGIN             = '/api/v3/login/';
+    const API_LOGIN_SESSION     = '/api/v3/login/session/';
 
     /** @var string */
     private $app_token  = '';
-
 
     /** @var string */
     private $challenge  = '';
@@ -27,17 +28,19 @@ class Login {
 
     private $session_token;
 
-
+    /**
+     * Login constructor.
+     * @param $app_token
+     */
     public function __construct( $app_token){
         $this->app_token = $app_token;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function ask_login_status(){
-
-        $service = '/api/v3/login/';
-        $host = 'mafreebox.freebox.fr';
-
-        $rest = new \alphayax\utils\Rest( 'http://' . $host . $service);
+        $rest = $this->getService( static::API_LOGIN);
         $rest->GET();
 
         $response = $rest->getCurlResponse();
@@ -45,34 +48,24 @@ class Login {
             throw new \Exception( __FUNCTION__ . ' Fail');
         }
 
-
         $this->logged_in = $response->result->logged_in;
         $this->challenge = $response->result->challenge;
         $this->password_salt = $response->result->password_salt;
-
-        var_dump( $response);
     }
 
-
+    /**
+     * @throws \Exception
+     */
     public function create_session(){
-
-        $service = '/api/v3/login/session/';
-        $host = 'mafreebox.freebox.fr';
-
-        $rest = new \alphayax\utils\Rest( 'http://' . $host . $service);
+        $rest = $this->getService( static::API_LOGIN_SESSION);
         $rest->POST([
-            'app_id'    => self::APP_ID,
+            'app_id'    => DNS_changer::APP_ID,
             'password'  => hash_hmac( 'sha1', $this->challenge, $this->app_token),
         ]);
 
-        $a= hash_hmac( 'sha1', $this->app_token, $this->challenge);
-        var_dump( $a, $this->challenge, $this->app_token);
-
         $response = $rest->getCurlResponse();
         if( ! $response->success){
-            echo "ERROR CODE : ". $response->error_code;
-            echo "MESSAGE : ". $response->msg;
-            throw new \Exception( __FUNCTION__ . ' Fail');
+            throw new \Exception( @$response->msg . ' '. @$response->error_code);
         }
 
         $this->session_token = $response->result->session_token;

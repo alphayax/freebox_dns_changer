@@ -1,5 +1,6 @@
 <?php
-namespace alphayax\freebox\api\v3;
+namespace alphayax\freebox\api\v3\login;
+use alphayax\freebox\api\v3\freebox_service;
 use alphayax\freebox\DNS_changer;
 use alphayax\utils\Cli;
 
@@ -8,10 +9,10 @@ use alphayax\utils\Cli;
  * @package alphayax\freebox\api\v3
  * @author <alphayax@gmail.com>
  */
-class Authorize {
+class Authorize extends freebox_service {
 
     /// APIs services
-    const API_AUTHORIZE     = '/api/v3/login/authorize/';
+    const API_LOGIN_AUTHORIZE     = '/api/v3/login/authorize/';
 
     /// Authorization status
     const STATUS_UNKNOWN = 'unknown';
@@ -65,10 +66,7 @@ class Authorize {
      * @throws \Exception
      */
     public function ask_authorization(){
-
-        $host = 'mafreebox.freebox.fr';
-
-        $rest = new \alphayax\utils\Rest('http://' . $host . self::API_AUTHORIZE);
+        $rest = $this->getService( self::API_LOGIN_AUTHORIZE);
         $rest->POST([
             'app_id'        => DNS_changer::APP_ID,
             'app_name'      => DNS_changer::APP_NAME,
@@ -91,11 +89,9 @@ class Authorize {
      * @throws \Exception
      */
     public function get_authorization_status(){
-
-        $host = 'mafreebox.freebox.fr';
-
         Cli::stdout( 'Check authorization status... ', 0, false, Cli::COLOR_YELLOW);
-        $rest = new \alphayax\utils\Rest('http://' . $host . self::API_AUTHORIZE . $this->track_id);
+
+        $rest = $this->getService( self::API_LOGIN_AUTHORIZE . $this->track_id);
         $rest->GET();
 
         $response = $rest->getCurlResponse();
