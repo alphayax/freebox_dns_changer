@@ -1,7 +1,8 @@
 <?php
 namespace alphayax\freebox\api\v3\login;
-use alphayax\freebox\api\v3\freebox_service;
+use alphayax\freebox\api\v3\Service;
 use alphayax\freebox\DNS_changer;
+use alphayax\freebox\utils\Application;
 
 
 /**
@@ -9,14 +10,14 @@ use alphayax\freebox\DNS_changer;
  * @package alphayax\freebox\api\v3
  * @author <alphayax@gmail.com>
  */
-class Login extends freebox_service {
+class Login extends Service {
 
     /// APIs services
     const API_LOGIN             = '/api/v3/login/';
     const API_LOGIN_SESSION     = '/api/v3/login/session/';
 
-    /** @var string */
-    private $app_token  = '';
+    /** @var Application */
+    private $application;
 
     /** @var string */
     private $challenge  = '';
@@ -30,10 +31,10 @@ class Login extends freebox_service {
 
     /**
      * Login constructor.
-     * @param $app_token
+     * @param $app
      */
-    public function __construct( $app_token){
-        $this->app_token = $app_token;
+    public function __construct( Application $app){
+        $this->application = $app;
     }
 
     /**
@@ -60,7 +61,7 @@ class Login extends freebox_service {
         $rest = $this->getService( static::API_LOGIN_SESSION);
         $rest->POST([
             'app_id'    => DNS_changer::APP_ID,
-            'password'  => hash_hmac( 'sha1', $this->challenge, $this->app_token),
+            'password'  => hash_hmac( 'sha1', $this->challenge, $this->application->getAppToken()),
         ]);
 
         $response = $rest->getCurlResponse();

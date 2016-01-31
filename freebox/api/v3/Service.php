@@ -4,7 +4,7 @@ namespace alphayax\freebox\api\v3;
 /**
  * Class freebox_service
  */
-abstract class freebox_service {
+abstract class Service {
 
     /// Freebox API host URI
     const API_HOST = 'http://mafreebox.freebox.fr';

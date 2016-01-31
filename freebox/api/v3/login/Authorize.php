@@ -1,7 +1,7 @@
 <?php
 namespace alphayax\freebox\api\v3\login;
-use alphayax\freebox\api\v3\freebox_service;
-use alphayax\freebox\DNS_changer;
+use alphayax\freebox\api\v3\Service;
+use alphayax\freebox\utils\Application;
 use alphayax\utils\Cli;
 
 /**
@@ -9,7 +9,7 @@ use alphayax\utils\Cli;
  * @package alphayax\freebox\api\v3
  * @author <alphayax@gmail.com>
  */
-class Authorize extends freebox_service {
+class Authorize extends Service {
 
     /// APIs services
     const API_LOGIN_AUTHORIZE     = '/api/v3/login/authorize/';
@@ -33,19 +33,24 @@ class Authorize extends freebox_service {
     /** @var string */
     private $challenge = '';
 
+    /** @var Application */
+    private $application;
+
     /**
      * Authorize constructor.
+     * @param Application $application
+     * @throws \Exception
      */
-    public function __construct(){
-        if( file_exists( 'app_token')){
-            $this->app_token = file_get_contents( 'app_token');
-        }
-        else {
+    public function __construct( Application $application){
+        $this->application = $application;
+        $this->application->loadAppToken();
+
+        if( ! $this->application->haveAppToken()){
             $this->ask_authorization();
             while( $this->status == self::STATUS_PENDING){
                 $this->get_authorization_status();
                 if( $this->status == self::STATUS_GRANTED){
-                    file_put_contents('app_token', $this->app_token); // Save app token
+                    $this->application->saveAppToken();
                     break;
                 }
                 sleep( 10);
@@ -54,7 +59,7 @@ class Authorize extends freebox_service {
             /// For verbose
             switch( $this->status){
                 case self::STATUS_GRANTED : Cli::stdout('Access granted !', 0, true, Cli::COLOR_GREEN); break;
-                case self::STATUS_TIMEOUT : Cli::stdout('Access denied. You take to long to authorize app.', 0, true, Cli::COLOR_RED); break;
+                case self::STATUS_TIMEOUT : Cli::stdout('Access denied. You take to long to authorize app', 0, true, Cli::COLOR_RED); break;
                 case self::STATUS_DENIED  : Cli::stdout('Access denied. Freebox denied app connexion', 0, true, Cli::COLOR_RED); break;
             }
         }
@@ -68,9 +73,9 @@ class Authorize extends freebox_service {
     public function ask_authorization(){
         $rest = $this->getService( self::API_LOGIN_AUTHORIZE);
         $rest->POST([
-            'app_id'        => DNS_changer::APP_ID,
-            'app_name'      => DNS_changer::APP_NAME,
-            'app_version'   => DNS_changer::APP_VERSION,
+            'app_id'        => $this->application->getId(),
+            'app_name'      => $this->application->getName(),
+            'app_version'   => $this->application->getVersion(),
             'device_name'   => gethostname(),
         ]);
 
