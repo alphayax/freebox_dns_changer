@@ -2,7 +2,6 @@
 namespace alphayax\freebox\api\v3\login;
 use alphayax\freebox\api\v3\Service;
 use alphayax\freebox\DNS_changer;
-use alphayax\freebox\utils\Application;
 
 
 /**
@@ -16,9 +15,6 @@ class Login extends Service {
     const API_LOGIN             = '/api/v3/login/';
     const API_LOGIN_SESSION     = '/api/v3/login/session/';
 
-    /** @var Application */
-    private $application;
-
     /** @var string */
     private $challenge  = '';
 
@@ -28,14 +24,6 @@ class Login extends Service {
 
 
     private $session_token;
-
-    /**
-     * Login constructor.
-     * @param $app
-     */
-    public function __construct( Application $app){
-        $this->application = $app;
-    }
 
     /**
      * @throws \Exception

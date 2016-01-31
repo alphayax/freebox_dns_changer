@@ -31,7 +31,7 @@ class DNS_changer {
         $new_DNS_servers = array_merge( $opennic_DNS_servers, $google_DNS_servers);
 
         /// Update Configuration
-        $Config = new api\v3\dhcp\DHCP( $App->getSessionToken());
+        $Config = new api\v3\dhcp\DHCP( $App);
         $prevConfig = $Config->get_current_configuration();
         $newConfig  = $Config->set_attribute_configuration(['dns' => $new_DNS_servers]);
 

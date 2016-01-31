@@ -33,16 +33,14 @@ class Authorize extends Service {
     /** @var string */
     private $challenge = '';
 
-    /** @var Application */
-    private $application;
-
     /**
      * Authorize constructor.
      * @param Application $application
      * @throws \Exception
      */
     public function __construct( Application $application){
-        $this->application = $application;
+        parent::__construct( $application);
+
         $this->application->loadAppToken();
 
         if( ! $this->application->haveAppToken()){

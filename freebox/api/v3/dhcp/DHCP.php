@@ -12,23 +12,11 @@ class DHCP extends Service {
 
     const API_DHCP_CONFIG = '/api/v3/dhcp/config/';
 
-    /** @var string */
-    private $session_token  = '';
-
-    /**
-     * DHCP constructor.
-     * @param $session_token
-     */
-    public function __construct( $session_token){
-        $this->session_token = $session_token;
-    }
-
     /**
      * @throws \Exception
      */
     public function get_current_configuration(){
         $rest = $this->getAuthService( self::API_DHCP_CONFIG);
-        $rest->setSessionToken( $this->session_token);
         $rest->GET();
 
         $response = $rest->getCurlResponse();
@@ -46,7 +34,7 @@ class DHCP extends Service {
      */
     public function set_attribute_configuration( $new_config_x = []){
         $rest = $this->getAuthService( self::API_DHCP_CONFIG);
-        $rest->setSessionToken( $this->session_token);
+        $rest->setSessionToken( $this->application->getSessionToken());
         $rest->PUT( $new_config_x);
 
         $response = $rest->getCurlResponse();

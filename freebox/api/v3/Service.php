@@ -1,13 +1,25 @@
 <?php
 namespace alphayax\freebox\api\v3;
+use alphayax\freebox\utils\Application;
 
 /**
  * Class freebox_service
  */
 abstract class Service {
 
+    /** @var Application */
+    protected $application;
+
     /// Freebox API host URI
     const API_HOST = 'http://mafreebox.freebox.fr';
+
+    /**
+     * Service constructor.
+     * @param Application $application
+     */
+    public function __construct( Application $application){
+        $this->application = $application;
+    }
 
     /**
      * @param $service
@@ -22,6 +34,8 @@ abstract class Service {
      * @return \alphayax\freebox\utils\RestAuth
      */
     protected function getAuthService( $service){
-        return new \alphayax\freebox\utils\RestAuth( static::API_HOST . $service);
+        $rest = new \alphayax\freebox\utils\RestAuth( static::API_HOST . $service);
+        $rest->setSessionToken( $this->application->getSessionToken());
+        return $rest;
     }
 }
