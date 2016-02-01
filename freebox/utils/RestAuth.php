@@ -13,27 +13,27 @@ class RestAuth extends \alphayax\utils\Rest {
     protected $session_token = '';
 
     /**
-     * @param bool $isJson
+     *
      */
-    public function GET( $isJson = true){
+    public function GET(){
         $this->add_XFbxAppAuth_Header();
-        parent::GET( $isJson);
+        parent::GET();
     }
 
     /**
-     * @param bool|true $isJson
+     * @param $curl_post_data
      */
-    public function POST( $isJson = true){
+    public function POST( $curl_post_data){
         $this->add_XFbxAppAuth_Header();
-        parent::POST( $isJson);
+        parent::POST( $curl_post_data);
     }
 
     /**
-     * @param bool|true $isJson
+     * @param $curl_post_data
      */
-    public function PUT( $isJson = true){
+    public function PUT( $curl_post_data){
         $this->add_XFbxAppAuth_Header();
-        parent::PUT( $isJson);
+        parent::PUT( $curl_post_data);
     }
 
     /**

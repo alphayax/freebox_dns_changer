@@ -14,49 +14,54 @@ class Rest {
     /** @var array */
     protected $_curl_response;
 
+    /** @var bool Indicate if the return is in JSON format */
+    protected $_isJson = true;
+
     /**
      * Rest constructor.
      * @param $_url
+     * @param bool $isJson
      */
-    public function __construct( $_url){
+    public function __construct( $_url, $isJson = true){
         $this->_curl_handler = curl_init( $_url);
+        $this->_isJson = $isJson;
     }
 
     /**
-     * @param bool $isJson
+     * Perform a GET request
      */
-    public function GET( $isJson = true){
+    public function GET(){
         curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
-        $this->exec( $isJson);
+        $this->exec();
     }
 
     /**
-     * @param      $curl_post_data
-     * @param bool $isJson
+     * Perform a POST request
+     * @param $curl_post_data
      */
-    public function POST( $curl_post_data, $isJson = true){
+    public function POST( $curl_post_data){
         curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt( $this->_curl_handler, CURLOPT_POST, true);
         curl_setopt( $this->_curl_handler, CURLOPT_POSTFIELDS, json_encode( $curl_post_data));
-        $this->exec( $isJson);
+        $this->exec();
     }
 
     /**
+     * Perform a PUT request
      * @param $curl_post_data
-     * @param bool|true $isJson
      */
-    public function PUT( $curl_post_data, $isJson = true){
+    public function PUT( $curl_post_data){
         curl_setopt( $this->_curl_handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt( $this->_curl_handler, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt( $this->_curl_handler, CURLOPT_POSTFIELDS, json_encode( $curl_post_data));
-        $this->exec( $isJson);
+        $this->exec();
     }
 
 
     /**
-     * @param $isJson
+     * Execute the HTTP request
      */
-    private function exec( $isJson){
+    private function exec(){
         $this->_curl_response = curl_exec( $this->_curl_handler);
         if( $this->_curl_response === false) {
             $info = curl_getinfo( $this->_curl_handler);
@@ -66,7 +71,7 @@ class Rest {
         curl_close( $this->_curl_handler);
 
         // Decode JSON if we need to
-        if( $isJson){
+        if( $this->_isJson){
             $this->_curl_response = json_decode( $this->_curl_response);
         }
         $this->_curl_response;
