@@ -5,10 +5,7 @@ namespace alphayax;
  * Freebox DNS Auto updater
  * @author <alphayax@gmail.com>
  */
-
-/// Autoloader
-require_once 'autoload.php';
-AYX_Autoloader::Register();
+require_once __DIR__ . '/vendor/autoload.php';
 
 /// Launch app
 new freebox\DNS_changer();

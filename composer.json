@@ -9,10 +9,20 @@
       "email": "alphayax@gmail.com"
     }
   ],
+  "autoload": {
+    "psr-4": {"alphayax\\": "./"}
+  },
   "repositories": [
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://github.com/alphayax/freebox_dns_changer"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/alphayax/freebox_api_php"
     }
-  ]
+  ],
+  "require" : {
+    "alphayax/freebox_api_php" : "*"
+  }
 }
