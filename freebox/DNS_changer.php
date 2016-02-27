@@ -64,7 +64,7 @@ class DNS_changer {
                 }
             } else {
                 if( $this->isVerbose){
-                    IO::stdout( "Server $dnsserver is OK", 1, true, IO::COLOR_RED);
+                    IO::stdout( "Server $dnsserver is not responding", 1, true, IO::COLOR_RED);
                 }
                 $isRespondingDNS = false;
             }
